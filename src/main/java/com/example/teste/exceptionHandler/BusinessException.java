@@ -1,4 +1,4 @@
-package com.example.teste.handler;
+package com.example.teste.exceptionHandler;
 
 public class BusinessException extends RuntimeException {
 

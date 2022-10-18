@@ -1,12 +1,14 @@
 package com.example.teste.service;
 
 import com.example.teste.dto.UsuarioDto;
-import com.example.teste.handler.BusinessException;
+import com.example.teste.exceptionHandler.BusinessException;
 import com.example.teste.model.Usuario;
 import com.example.teste.repository.UsuarioRepository;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
+import org.springframework.web.server.ResponseStatusException;
 
 import java.util.List;
 import java.util.stream.Collectors;
@@ -33,7 +35,7 @@ public class UsuarioService {
 
     public UsuarioDto buscar(Long id){
         Usuario usuario = this.usuarioRepository.findById(id)
-                .orElseThrow(() -> new BusinessException("Usuário não encontrado"));
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.BAD_REQUEST));
         return this.userToDto(usuario);
 
     }
@@ -46,7 +48,7 @@ public class UsuarioService {
 
     public UsuarioDto atualizar(UsuarioDto usuarioDto, Long id){
         Usuario usuario = this.usuarioRepository.findById(id)
-                .orElseThrow(() -> new BusinessException("Usuário não encontrado"));
+                .orElseThrow(() ->  new ResponseStatusException(HttpStatus.BAD_REQUEST));
         usuario.setNome(usuarioDto.getNome());
         usuario.setEmail(usuarioDto.getEmail());
         usuario.setLogin(usuarioDto.getLogin());
@@ -58,7 +60,7 @@ public class UsuarioService {
 
     public void deletar(Long id){
         Usuario usuario = this.usuarioRepository.findById(id)
-                .orElseThrow(() -> new BusinessException("Usuário não encontrado"));
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.BAD_REQUEST));
         this.usuarioRepository.delete(usuario);
 
     }

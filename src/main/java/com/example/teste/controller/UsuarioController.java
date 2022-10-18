@@ -10,6 +10,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import javax.validation.Valid;
 import java.util.List;
 import java.util.Map;
 
@@ -25,14 +26,13 @@ public class UsuarioController {
     }
 
     @PostMapping("/")
-
     @ApiOperation(value = "Cadastrar um Usuário")
-    public ResponseEntity<UsuarioDto> create(@RequestBody UsuarioDto usuarioDto){
+    public ResponseEntity<UsuarioDto> create(@Valid @RequestBody UsuarioDto usuarioDto){
         UsuarioDto createUser = this.usuarioService.salvar(usuarioDto);
         return new ResponseEntity<>(createUser, HttpStatus.CREATED);
     }
-    @ApiOperation(value = "Listar todos os usuários")
     @GetMapping("/")
+    @ApiOperation(value = "Listar todos os usuários")
     public ResponseEntity<List<UsuarioDto>> getAllUser(){
         return ResponseEntity.ok(this.usuarioService.listar());
     }
@@ -45,7 +45,7 @@ public class UsuarioController {
 
     @PutMapping("/{id}")
     @ApiOperation(value = "Atualizar um usuários")
-    public ResponseEntity<UsuarioDto> updateUser(@RequestBody UsuarioDto usuarioDto, @PathVariable Long id ){
+    public ResponseEntity<UsuarioDto> updateUser(@Valid @RequestBody UsuarioDto usuarioDto, @PathVariable Long id ){
         UsuarioDto update = this.usuarioService.atualizar(usuarioDto,id);
         return ResponseEntity.ok(update);
 
@@ -55,7 +55,7 @@ public class UsuarioController {
     @ApiOperation(value = "Deletar um usuários")
     public ResponseEntity<?>deleteUser(@PathVariable Long id){
         this.usuarioService.deletar(id);
-        return new ResponseEntity<>(Map.of("Messagem", "Usuario deletado "),HttpStatus.OK);
+        return new ResponseEntity<>(Map.of("Messagem", "Usuario deletado "),HttpStatus.NO_CONTENT);
     }
 
 }
