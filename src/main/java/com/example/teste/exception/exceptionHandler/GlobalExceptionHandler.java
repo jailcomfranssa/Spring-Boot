@@ -1,6 +1,9 @@
 package com.example.teste.exception.exceptionHandler;
 
+import com.example.teste.exception.negocioException.ExceptionBadRequest;
 import com.example.teste.exception.negocioException.NegocioException;
+import com.example.teste.util.DateUtil;
+import com.example.teste.util.StringUtil;
 import lombok.AllArgsConstructor;
 import org.springframework.context.MessageSource;
 import org.springframework.context.i18n.LocaleContextHolder;
@@ -25,6 +28,10 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
 
     private MessageSource messageSource;
 
+    private DateUtil dateUtil;
+
+    private StringUtil stringUtil;
+
     @Override
     protected ResponseEntity<Object> handleMethodArgumentNotValid(MethodArgumentNotValidException ex,
                                                                   HttpHeaders headers, HttpStatus status, WebRequest request) {
@@ -41,24 +48,25 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
 
         ResponseError responseError = new ResponseError();
         responseError.setStatus(status.value());
-        responseError.setDataHora(LocalDateTime.now());
+        responseError.setDataHora(dateUtil.formatLocalDateTimeToDatabesseStyle(LocalDateTime.now()));
         responseError.setTitulo("Campo Obrigatório");
         responseError.setError(status.getReasonPhrase());
         responseError.setCampos(campos);
+        responseError.setDetalhes(stringUtil.formatString(45,ex.getClass().getName()));
 
         return handleExceptionInternal(ex,responseError,headers, status, request);
     }
 
-    @ExceptionHandler(NegocioException.class)
+    @ExceptionHandler(ExceptionBadRequest.class)
     public ResponseEntity<Object> badRequest(NegocioException ex, WebRequest webRequest){
         HttpHeaders headers = new HttpHeaders();
         HttpStatus status = HttpStatus.BAD_REQUEST;
         ResponseError responseError = new ResponseError();
         responseError.setStatus(status.value());
-        responseError.setDataHora(LocalDateTime.now());
+        responseError.setDataHora(dateUtil.formatLocalDateTimeToDatabesseStyle(LocalDateTime.now()));
         responseError.setTitulo(ex.getMessage());
         responseError.setError(status.getReasonPhrase());
-
+        responseError.setDetalhes(stringUtil.formatString(45,ex.getClass().getName()));
 
         return handleExceptionInternal(ex,responseError,headers,status,webRequest);
 

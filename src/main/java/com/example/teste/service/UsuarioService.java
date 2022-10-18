@@ -1,6 +1,7 @@
 package com.example.teste.service;
 
 import com.example.teste.dto.UsuarioDto;
+import com.example.teste.exception.negocioException.ExceptionBadRequest;
 import com.example.teste.exception.negocioException.NegocioException;
 import com.example.teste.model.Usuario;
 import com.example.teste.repository.UsuarioRepository;
@@ -34,7 +35,7 @@ public class UsuarioService {
                 .stream()
                 .anyMatch(existe-> !existe.equals(usuarioDto));
         if(emailEmUso){
-            throw  new NegocioException("E-mail já cadastrado");
+            throw  new ExceptionBadRequest("E-mail já cadastrado");
         }
         Usuario saveUsuario = this.usuarioRepository.save(usuario);
         return this.userToDto(saveUsuario);
@@ -43,7 +44,7 @@ public class UsuarioService {
 
     public UsuarioDto buscar(Long id){
         Usuario usuario = this.usuarioRepository.findById(id)
-                .orElseThrow(() -> new NegocioException("Usuário nao existe"));
+                .orElseThrow(() -> new ExceptionBadRequest("Usuário nao existe"));
         return this.userToDto(usuario);
 
     }
@@ -56,7 +57,7 @@ public class UsuarioService {
 
     public UsuarioDto atualizar(UsuarioDto usuarioDto, Long id){
         Usuario usuario = this.usuarioRepository.findById(id)
-                .orElseThrow(() -> new NegocioException("Usuário nao existe"));
+                .orElseThrow(() -> new ExceptionBadRequest("Usuário nao existe"));
         usuario.setNome(usuarioDto.getNome());
         usuario.setEmail(usuarioDto.getEmail());
         usuario.setLogin(usuarioDto.getLogin());
@@ -68,7 +69,7 @@ public class UsuarioService {
     @Transactional
     public void deletar(Long id){
         Usuario usuario = this.usuarioRepository.findById(id)
-                .orElseThrow(() -> new NegocioException("Usuário nao existe"));
+                .orElseThrow(() -> new ExceptionBadRequest("Usuário nao existe"));
         this.usuarioRepository.delete(usuario);
 
     }

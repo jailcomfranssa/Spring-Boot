@@ -13,9 +13,11 @@ import java.util.List;
 @JsonInclude(JsonInclude.Include.NON_NULL)
 public class ResponseError {
 
-    private LocalDateTime dataHora;
+    private String dataHora;
     private Integer status;
     private String error = "error";
     private String titulo;
+    private String detalhes;
+    private String developerMessage;
     private List <CampoObrigatorioException> campos;
 }
