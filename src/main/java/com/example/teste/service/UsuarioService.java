@@ -1,13 +1,14 @@
 package com.example.teste.service;
 
 import com.example.teste.dto.UsuarioDto;
-import com.example.teste.exceptionHandler.BusinessException;
+import com.example.teste.exception.negocioException.NegocioException;
 import com.example.teste.model.Usuario;
 import com.example.teste.repository.UsuarioRepository;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.server.ResponseStatusException;
 
 import java.util.List;
@@ -26,8 +27,15 @@ public class UsuarioService {
         this.modelMapper = modelMapper;
     }
 
+    @Transactional
     public UsuarioDto salvar(UsuarioDto usuarioDto){
         Usuario usuario = this.dtoToUser(usuarioDto);
+        boolean emailEmUso =  usuarioRepository.findByEmail(usuario.getEmail())
+                .stream()
+                .anyMatch(existe-> !existe.equals(usuarioDto));
+        if(emailEmUso){
+            throw  new NegocioException("E-mail já cadastrado");
+        }
         Usuario saveUsuario = this.usuarioRepository.save(usuario);
         return this.userToDto(saveUsuario);
 
@@ -35,7 +43,7 @@ public class UsuarioService {
 
     public UsuarioDto buscar(Long id){
         Usuario usuario = this.usuarioRepository.findById(id)
-                .orElseThrow(() -> new ResponseStatusException(HttpStatus.BAD_REQUEST));
+                .orElseThrow(() -> new NegocioException("Usuário nao existe"));
         return this.userToDto(usuario);
 
     }
@@ -48,7 +56,7 @@ public class UsuarioService {
 
     public UsuarioDto atualizar(UsuarioDto usuarioDto, Long id){
         Usuario usuario = this.usuarioRepository.findById(id)
-                .orElseThrow(() ->  new ResponseStatusException(HttpStatus.BAD_REQUEST));
+                .orElseThrow(() -> new NegocioException("Usuário nao existe"));
         usuario.setNome(usuarioDto.getNome());
         usuario.setEmail(usuarioDto.getEmail());
         usuario.setLogin(usuarioDto.getLogin());
@@ -57,10 +65,10 @@ public class UsuarioService {
         return this.userToDto(updateUsuario);
 
     }
-
+    @Transactional
     public void deletar(Long id){
         Usuario usuario = this.usuarioRepository.findById(id)
-                .orElseThrow(() -> new ResponseStatusException(HttpStatus.BAD_REQUEST));
+                .orElseThrow(() -> new NegocioException("Usuário nao existe"));
         this.usuarioRepository.delete(usuario);
 
     }

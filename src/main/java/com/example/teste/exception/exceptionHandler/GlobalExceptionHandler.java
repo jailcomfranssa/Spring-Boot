@@ -1,5 +1,6 @@
-package com.example.teste.exceptionHandler;
+package com.example.teste.exception.exceptionHandler;
 
+import com.example.teste.exception.negocioException.NegocioException;
 import lombok.AllArgsConstructor;
 import org.springframework.context.MessageSource;
 import org.springframework.context.i18n.LocaleContextHolder;
@@ -9,6 +10,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.validation.FieldError;
 import org.springframework.validation.ObjectError;
 import org.springframework.web.bind.MethodArgumentNotValidException;
+import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 import org.springframework.web.context.request.WebRequest;
 import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExceptionHandler;
@@ -16,7 +18,6 @@ import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExcep
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Locale;
 
 @AllArgsConstructor
 @RestControllerAdvice
@@ -42,9 +43,26 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
         responseError.setStatus(status.value());
         responseError.setDataHora(LocalDateTime.now());
         responseError.setTitulo("Campo Obrigatório");
-        responseError.getError();
+        responseError.setError(status.getReasonPhrase());
         responseError.setCampos(campos);
 
         return handleExceptionInternal(ex,responseError,headers, status, request);
     }
+
+    @ExceptionHandler(NegocioException.class)
+    public ResponseEntity<Object> badRequest(NegocioException ex, WebRequest webRequest){
+        HttpHeaders headers = new HttpHeaders();
+        HttpStatus status = HttpStatus.BAD_REQUEST;
+        ResponseError responseError = new ResponseError();
+        responseError.setStatus(status.value());
+        responseError.setDataHora(LocalDateTime.now());
+        responseError.setTitulo(ex.getMessage());
+        responseError.setError(status.getReasonPhrase());
+
+
+        return handleExceptionInternal(ex,responseError,headers,status,webRequest);
+
+    }
+
+
 }
