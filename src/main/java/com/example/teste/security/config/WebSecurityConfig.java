@@ -1,5 +1,6 @@
 package com.example.teste.security.config;
 
+import com.example.teste.security.jwt.JWTFilter;
 import org.springframework.boot.web.servlet.ServletRegistrationBean;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -37,13 +38,14 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter{
     protected void configure(HttpSecurity http) throws Exception {
         http.headers().frameOptions().disable();
         http.cors().and().csrf().disable()
-                //.addFilterAfter(new JWTFilter(), UsernamePasswordAuthenticationFilter.class)
+                .addFilterAfter(new JWTFilter(), UsernamePasswordAuthenticationFilter.class)
                 .authorizeRequests()
                 .antMatchers(SWAGGER_WHITELIST).permitAll()
                 .antMatchers(HttpMethod.POST,"/login").permitAll()
                 .antMatchers(HttpMethod.POST,"/api/usuarios/").permitAll()
                 .antMatchers(HttpMethod.GET,"/api/usuarios/").hasAnyRole("USERS","MANAGERS")
                 .antMatchers("/managers").hasAnyRole("MANAGERS")
+                .antMatchers("/users").hasAnyRole("USERS")
                 .anyRequest().authenticated()
                 .and()
                 .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS);
