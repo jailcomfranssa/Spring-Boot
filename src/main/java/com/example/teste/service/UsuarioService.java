@@ -6,9 +6,7 @@ import com.example.teste.model.Usuario;
 import com.example.teste.repository.UsuarioRepository;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.annotation.Bean;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
-import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -39,8 +37,8 @@ public class UsuarioService {
             throw new ExceptionBadRequest("E-mail já cadastrado");
         }
 
-        String encoded = new BCryptPasswordEncoder().encode(usuario.getLogin());
-        usuario.setLogin(encoded);
+        String encoded = new BCryptPasswordEncoder().encode(usuario.getSenha());
+        usuario.setSenha(encoded);
 
         Usuario saveUsuario = this.usuarioRepository.save(usuario);
         return this.userToDto(saveUsuario);
@@ -66,7 +64,7 @@ public class UsuarioService {
                 .orElseThrow(() -> new ExceptionBadRequest("Usuário nao existe"));
         usuario.setNome(usuarioDto.getNome());
         usuario.setEmail(usuarioDto.getEmail());
-        usuario.setLogin(usuarioDto.getLogin());
+        usuario.setSenha(usuarioDto.getSenha());
 
         Usuario updateUsuario = this.usuarioRepository.save(usuario);
         return this.userToDto(updateUsuario);

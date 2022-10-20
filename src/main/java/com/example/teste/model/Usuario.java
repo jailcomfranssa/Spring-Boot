@@ -21,7 +21,7 @@ public class Usuario {
 
     private String nome;
     private String email;
-    private String login;
+    private String senha;
 
     @ElementCollection(fetch = FetchType.EAGER)
     @CollectionTable(name = "usuario_roles",joinColumns = @JoinColumn(name = "id"))

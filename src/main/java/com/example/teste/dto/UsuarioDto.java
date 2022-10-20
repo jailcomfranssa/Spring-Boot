@@ -6,6 +6,8 @@ import javax.validation.constraints.Email;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.Size;
+import java.util.ArrayList;
+import java.util.List;
 
 @Getter
 @Setter
@@ -24,5 +26,7 @@ public class UsuarioDto {
     private String email;
 
     @NotEmpty
-    private String login;
+    private String senha;
+
+    private List<String> roles = new ArrayList<>();
 }
